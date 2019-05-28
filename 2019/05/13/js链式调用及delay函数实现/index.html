@@ -2,20 +2,24 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
-<title>Cjc&#39;s Blog</title>
+<title>js链式调用及delay函数实现 - Cjc&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Cjc&#39;s Blog">
-<meta property="og:url" content="http://chenjiacheng.cn/index.html">
+    <meta name="description" content="今天在晚上看到一道JavaScript的面试题，感觉涉及到的知识点还是挺多的，在此记录一番。 先看下原题目123456789101112131415161718Person(&quot;Li&quot;);// 输出： Hi! This is Li!Person(&quot;Jerry&quot;).eat(&quot;dinner&quot;).eat(&quot;supper&quot;);// 输出：// Hi This is Jerry!// Eat dinner~P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js链式调用及delay函数实现">
+<meta property="og:url" content="http://chenjiacheng.cn/2019/05/13/js链式调用及delay函数实现/index.html">
 <meta property="og:site_name" content="Cjc&#39;s Blog">
+<meta property="og:description" content="今天在晚上看到一道JavaScript的面试题，感觉涉及到的知识点还是挺多的，在此记录一番。 先看下原题目123456789101112131415161718Person(&quot;Li&quot;);// 输出： Hi! This is Li!Person(&quot;Jerry&quot;).eat(&quot;dinner&quot;).eat(&quot;supper&quot;);// 输出：// Hi This is Jerry!// Eat dinner~P">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://chenjiacheng.cn/images/og_image.png">
+<meta property="og:image" content="http://chenjiacheng.cn/images/article/1.jpg">
+<meta property="og:updated_time" content="2019-05-28T09:14:27.882Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Cjc&#39;s Blog">
-<meta name="twitter:image" content="http://chenjiacheng.cn/images/og_image.png">
+<meta name="twitter:title" content="js链式调用及delay函数实现">
+<meta name="twitter:description" content="今天在晚上看到一道JavaScript的面试题，感觉涉及到的知识点还是挺多的，在此记录一番。 先看下原题目123456789101112131415161718Person(&quot;Li&quot;);// 输出： Hi! This is Li!Person(&quot;Jerry&quot;).eat(&quot;dinner&quot;).eat(&quot;supper&quot;);// 输出：// Hi This is Jerry!// Eat dinner~P">
+<meta name="twitter:image" content="http://chenjiacheng.cn/images/article/1.jpg">
 
 
 
@@ -89,7 +93,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="Cjc&#39;s Blog" height="28">
+                <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="js链式调用及delay函数实现" height="28">
             
             </a>
         </div>
@@ -97,7 +101,7 @@
             
             <div class="navbar-start">
                 
-                <a class="navbar-item is-active" href="/">主页</a>
+                <a class="navbar-item" href="/">主页</a>
                 
                 <a class="navbar-item" href="/archives">归档</a>
                 
@@ -134,13 +138,12 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
-    <div class="card">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
     
     <div class="card-image">
-        <a href="/2019/05/13/js链式调用及delay函数实现/" class="image is-7by1">
+        <span class="image is-7by1">
             <img class="thumbnail" src="/images/article/1.jpg" alt="js链式调用及delay函数实现">
-        </a>
+        </span>
     </div>
     
     <div class="card-content article ">
@@ -166,7 +169,7 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/05/13/js链式调用及delay函数实现/">js链式调用及delay函数实现</a>
+                js链式调用及delay函数实现
             
         </h1>
         <div class="content">
@@ -192,11 +195,59 @@
 
 
 
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpeg" alt="支付宝"></div>
+</a>
+
+                
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechatpay.jpeg" alt="微信"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
 
 
 
 
 
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="valine-thread" class="content"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+    new Valine({
+        el: '#valine-thread' ,
+        notify: false,
+        verify: false,
+        app_id: 'NOvzOHa6rN6mMSoKjnQjy5PV-gzGzoHsz',
+        app_key: 'tEwtdbOHcNU6dzP6NvMIRSDv',
+        placeholder: '在此输入评论'
+    });
+</script>
+
+    </div>
+</div>
 </div>
                 
 
@@ -489,7 +540,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="Cjc&#39;s Blog" height="28">
+                    <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="js链式调用及delay函数实现" height="28">
                 
                 </a>
                 <p class="is-size-7">
