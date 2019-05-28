@@ -157,7 +157,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    6 分钟 读完 (大约 918 个字)
+                    7 分钟 读完 (大约 1014 个字)
                 </span>
                 
                 
@@ -182,6 +182,7 @@
 <p>这段代码的增加了queue数组来存储事件列队，在每个事件函数最后添加this.next()，通过next函数依次从队列中取出函数不断的来调用，需要注意的是在Main函数中最后调用的this.next需要异步执行，否则在初始化调用next方法时事件列队为空。</p>
 <p>这时基本的功能已经都实现了，还有一个fristsleep函数，将所有的事件都延迟执行，有了上面的铺垫这个实现起来就很简单了，我们只需在添加fristsleep函数内向queue添加的push方法改为unshift，这样就把fristsleep添加到事件列队的第一位，下面看具体代码实现</p>
 <figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">// add code</span></span><br><span class="line">Main.prototype.fristsleep = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">time</span>) </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">this</span>.queue.unshift( <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">    setTimeout( <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Wake up after <span class="hljs-subst">$&#123;time&#125;</span>`</span>)</span><br><span class="line">      <span class="hljs-keyword">this</span>.next()</span><br><span class="line">    &#125;, time * <span class="hljs-number">1000</span>)</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上就是本篇文章的全部内容，在这个题目中分别涉及到了工厂模式，this上下文，浏览器事件队列相关的知识点，链式调用平时的使用还是很频繁的比如Promise的then方法和catch方法，下一篇文章我们来具体的说一说Promise的实现。 </p>
 
         </div>
         
