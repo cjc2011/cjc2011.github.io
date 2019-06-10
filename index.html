@@ -137,6 +137,46 @@
                 <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
     <div class="card">
     
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-05-29T02:07:01.000Z">2019-05-29</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    几秒 读完 (大约 101 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2019/05/29/Promise内部实现原理/">Promise内部实现原理</a>
+            
+        </h1>
+        <div class="content">
+            <figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> PENDING = <span class="hljs-string">'pending'</span></span><br><span class="line"><span class="hljs-keyword">const</span> FULFILLED = <span class="hljs-string">'fulfilled'</span></span><br><span class="line"><span class="hljs-keyword">const</span> REJECTED = <span class="hljs-string">'rejected'</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Promise_</span>(<span class="hljs-params">fn</span>) </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">let</span> that = <span class="hljs-keyword">this</span></span><br><span class="line">  that.status = PENDING</span><br><span class="line">  that.value = <span class="hljs-literal">null</span></span><br><span class="line">  that.reason = <span class="hljs-literal">null</span></span><br><span class="line">  that.fullfilledCallback = []</span><br><span class="line">  that.rejectedCallback = []</span><br><span class="line"></span><br><span class="line">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">resolve</span>(<span class="hljs-params">value</span>) </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span>(value <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Promise</span>) &#123;</span><br><span class="line">      <span class="hljs-keyword">return</span> value.then(resolve, reject)</span><br><span class="line">    &#125;</span><br><span class="line">    setTimeout( <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">if</span>(that.status === PENDING) &#123;</span><br><span class="line">        that.status = PENDING</span><br><span class="line">        that.value = value</span><br><span class="line">        that.fullfilledCallback.forEach( <span class="hljs-function">(<span class="hljs-params">cb</span>) =&gt;</span> &#123;</span><br><span class="line">          cb(that.value)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">rejected</span>(<span class="hljs-params">error</span>) </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (that.status === PENDING) &#123;</span><br><span class="line">      that.status = REJECTED</span><br><span class="line">      that.reason = error</span><br><span class="line">      that.rejectedCallback.forEach( <span class="hljs-function"><span class="hljs-params">cb</span> =&gt;</span> &#123;</span><br><span class="line">        cb(that.reason)</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Promise_.prototype.then = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fulfilled, rejected</span>) </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">typeof</span> fulfilled === <span class="hljs-string">'function'</span> &amp;&amp; that.fullfilledCallback.psuh(fulfilled)</span><br><span class="line">  <span class="hljs-keyword">typeof</span> rejected === <span class="hljs-string">'function'</span> &amp;&amp; that.rejectedCallback.psuh(rejected)</span><br><span class="line">  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="card">
+    
     <div class="card-image">
         <a href="/2019/05/13/js链式调用及delay函数实现/" class="image is-7by1">
             <img class="thumbnail" src="/images/article/1.jpg" alt="js链式调用及delay函数实现">
@@ -241,7 +281,7 @@
                         文章
                     </p>
                     <p class="title has-text-weight-normal">
-                        1
+                        2
                     </p>
                 </div>
             </div>
@@ -342,6 +382,25 @@
         
         <article class="media">
             
+            <a href="/2019/05/29/Promise内部实现原理/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Promise内部实现原理">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-29T02:07:01.000Z">2019-05-29</time></div>
+                    <a href="/2019/05/29/Promise内部实现原理/" class="has-link-black-ter is-size-6">Promise内部实现原理</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/05/13/js链式调用及delay函数实现/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/article/1.jpg" alt="js链式调用及delay函数实现">
@@ -377,7 +436,7 @@
                     <span class="level-item">五月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -420,6 +479,25 @@
         
         <article class="media">
             
+            <a href="/2019/05/29/Promise内部实现原理/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Promise内部实现原理">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-05-29T02:07:01.000Z">2019-05-29</time></div>
+                    <a href="/2019/05/29/Promise内部实现原理/" class="has-link-black-ter is-size-6">Promise内部实现原理</a>
+                    <p class="is-size-7 is-uppercase">
+                        
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/05/13/js链式调用及delay函数实现/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/article/1.jpg" alt="js链式调用及delay函数实现">
@@ -455,7 +533,7 @@
                     <span class="level-item">五月 2019</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>

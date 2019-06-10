@@ -2,19 +2,23 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
-<title>归档 - Cjc&#39;s Blog</title>
+<title>Promise内部实现原理 - Cjc&#39;s Blog</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Cjc&#39;s Blog">
-<meta property="og:url" content="http://chenjiacheng.cn/archives/index.html">
+    <meta name="description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344const PENDING = &apos;pending&apos;const FULFILLED = &apos;fulfilled&apos;const REJECTED = &apos;rejected&apos;function Promise_(fn) &amp;#123;  let that =">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Promise内部实现原理">
+<meta property="og:url" content="http://chenjiacheng.cn/2019/05/29/Promise内部实现原理/index.html">
 <meta property="og:site_name" content="Cjc&#39;s Blog">
+<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344const PENDING = &apos;pending&apos;const FULFILLED = &apos;fulfilled&apos;const REJECTED = &apos;rejected&apos;function Promise_(fn) &amp;#123;  let that =">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://chenjiacheng.cn/images/og_image.png">
+<meta property="og:updated_time" content="2019-06-10T04:01:51.176Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Cjc&#39;s Blog">
+<meta name="twitter:title" content="Promise内部实现原理">
+<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344const PENDING = &apos;pending&apos;const FULFILLED = &apos;fulfilled&apos;const REJECTED = &apos;rejected&apos;function Promise_(fn) &amp;#123;  let that =">
 <meta name="twitter:image" content="http://chenjiacheng.cn/images/og_image.png">
 
 
@@ -89,7 +93,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="Cjc&#39;s Blog" height="28">
+                <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="Promise内部实现原理" height="28">
             
             </a>
         </div>
@@ -99,7 +103,7 @@
                 
                 <a class="navbar-item" href="/">主页</a>
                 
-                <a class="navbar-item is-active" href="/archives">归档</a>
+                <a class="navbar-item" href="/archives">归档</a>
                 
                 <a class="navbar-item" href="/categories">分类</a>
                 
@@ -134,60 +138,108 @@
     <section class="section">
         <div class="container">
             <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main"><div class="card">
+    
+    <div class="card-content article ">
         
-<div class="card widget">
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-05-29T02:07:01.000Z">2019-05-29</time>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    几秒 读完 (大约 101 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Promise内部实现原理
+            
+        </h1>
+        <div class="content">
+            <figure class="highlight js hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="hljs-keyword">const</span> PENDING = <span class="hljs-string">'pending'</span></span><br><span class="line"><span class="hljs-keyword">const</span> FULFILLED = <span class="hljs-string">'fulfilled'</span></span><br><span class="line"><span class="hljs-keyword">const</span> REJECTED = <span class="hljs-string">'rejected'</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Promise_</span>(<span class="hljs-params">fn</span>) </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">let</span> that = <span class="hljs-keyword">this</span></span><br><span class="line">  that.status = PENDING</span><br><span class="line">  that.value = <span class="hljs-literal">null</span></span><br><span class="line">  that.reason = <span class="hljs-literal">null</span></span><br><span class="line">  that.fullfilledCallback = []</span><br><span class="line">  that.rejectedCallback = []</span><br><span class="line"></span><br><span class="line">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">resolve</span>(<span class="hljs-params">value</span>) </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span>(value <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Promise</span>) &#123;</span><br><span class="line">      <span class="hljs-keyword">return</span> value.then(resolve, reject)</span><br><span class="line">    &#125;</span><br><span class="line">    setTimeout( <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="hljs-keyword">if</span>(that.status === PENDING) &#123;</span><br><span class="line">        that.status = PENDING</span><br><span class="line">        that.value = value</span><br><span class="line">        that.fullfilledCallback.forEach( <span class="hljs-function">(<span class="hljs-params">cb</span>) =&gt;</span> &#123;</span><br><span class="line">          cb(that.value)</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">rejected</span>(<span class="hljs-params">error</span>) </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">if</span> (that.status === PENDING) &#123;</span><br><span class="line">      that.status = REJECTED</span><br><span class="line">      that.reason = error</span><br><span class="line">      that.rejectedCallback.forEach( <span class="hljs-function"><span class="hljs-params">cb</span> =&gt;</span> &#123;</span><br><span class="line">        cb(that.reason)</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Promise_.prototype.then = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fulfilled, rejected</span>) </span>&#123;</span><br><span class="line">  <span class="hljs-keyword">typeof</span> fulfilled === <span class="hljs-string">'function'</span> &amp;&amp; that.fullfilledCallback.psuh(fulfilled)</span><br><span class="line">  <span class="hljs-keyword">typeof</span> rejected === <span class="hljs-string">'function'</span> &amp;&amp; that.rejectedCallback.psuh(rejected)</span><br><span class="line">  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+<div class="card">
     <div class="card-content">
-        <h3 class="tag is-link">
-        2019
-        </h3>
-        <div class="timeline">
-        
-            <article class="media">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
                 
-                <div class="media-content">
-                    <div class="content">
-                        <time class="has-text-grey is-size-7 is-block is-uppercase" datetime="2019-05-29T02:07:01.000Z">2019-05-29</time>
-                        <a href="/2019/05/29/Promise内部实现原理/" class="has-link-black-ter is-size-6">Promise内部实现原理</a>
-                        <div class="level article-meta is-mobile">
-                            <div class="level-left">
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        
-            <article class="media">
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpeg" alt="支付宝"></div>
+</a>
+
                 
-                <a href="/2019/05/13/js链式调用及delay函数实现/" class="media-left">
-                    <p class="image is-64x64">
-                        <img class="thumbnail" src="/images/article/1.jpg" alt="js链式调用及delay函数实现">
-                    </p>
-                </a>
                 
-                <div class="media-content">
-                    <div class="content">
-                        <time class="has-text-grey is-size-7 is-block is-uppercase" datetime="2019-05-13T02:40:19.000Z">2019-05-13</time>
-                        <a href="/2019/05/13/js链式调用及delay函数实现/" class="has-link-black-ter is-size-6">js链式调用及delay函数实现</a>
-                        <div class="level article-meta is-mobile">
-                            <div class="level-left">
-                                
-                                <div class="level-item is-size-7 is-uppercase">
-                                <a class="has-link-grey -link" href="/categories/js/">js</a>
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
-        
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wechatpay.jpeg" alt="微信"></div>
+</a>
+
+                
         </div>
     </div>
 </div>
 
-    
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/05/13/js链式调用及delay函数实现/">
+                <span class="level-item">js链式调用及delay函数实现</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<div id="valine-thread" class="content"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+    new Valine({
+        el: '#valine-thread' ,
+        notify: false,
+        verify: false,
+        app_id: 'NOvzOHa6rN6mMSoKjnQjy5PV-gzGzoHsz',
+        app_key: 'tEwtdbOHcNU6dzP6NvMIRSDv',
+        placeholder: '在此输入评论'
+    });
+</script>
+
+    </div>
+</div>
 </div>
                 
 
@@ -518,7 +570,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="Cjc&#39;s Blog" height="28">
+                    <img src="https://dn-coding-net-production-pp.codehub.cn/3561610c-0908-49fa-8da2-846777015db1.png" alt="Promise内部实现原理" height="28">
                 
                 </a>
                 <p class="is-size-7">
